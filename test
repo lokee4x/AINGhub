@@ -1,25 +1,82 @@
-local correctModel = workspace.Glasses:FindFirstChild("Correct")
-local wrongModel = workspace.Glasses:FindFirstChild("Wrong")
-local Section = Window:NewSection("Glasses")
+-- Load Rayfield UI Library
+local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+local Window = Rayfield:CreateWindow({
+    Name = "Glass Model Highlighter",
+    LoadingTitle = "Loading UI...",
+    LoadingSubtitle = "by lokee4x",
+    ConfigurationSaving = {
+        Enabled = false,
+        FolderName = "GlassUI",
+        FileName = "Config"
+    },
+    Discord = {
+        Enabled = false,
+    },
+    KeySystem = false
+})
 
-Section:CreateButton("Show path", function()
-    if wrongModel then
-        for _, part in pairs(wrongModel:GetDescendants()) do
+-- Create a Section for Model Highlighting
+local Tab = Window:CreateTab("Model Highlighter", 4483362458) -- Glass Icon
+local Section = Tab:CreateSection("Highlight Options")
+
+-- Model Selection Dropdown
+local selectedModel = nil
+local modelDropdown = Tab:CreateDropdown({
+    Name = "Select a Model",
+    Options = {"Correct", "Wrong"},
+    Callback = function(selected)
+        selectedModel = workspace.Glasses:FindFirstChild(selected)
+        if selectedModel then
+            Rayfield:Notify({
+                Title = "Model Selected",
+                Content = "You selected: " .. selected,
+                Duration = 2
+            })
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Model '" .. selected .. "' not found.",
+                Duration = 2
+            })
+        end
+    end
+})
+
+-- Function to Change Model Color
+local function changeModelColor(model, colorName)
+    if model then
+        for _, part in pairs(model:GetDescendants()) do
             if part:IsA("BasePart") then
-                part.BrickColor = BrickColor.new("Terra Cotta")
+                part.BrickColor = BrickColor.new(colorName)
             end
         end
+        Rayfield:Notify({
+            Title = "Success",
+            Content = "Highlighted " .. model.Name .. " with color " .. colorName,
+            Duration = 2
+        })
     else
-        print("Model 'wrong' not found.")
+        Rayfield:Notify({
+            Title = "Error",
+            Content = "No model selected or model not found.",
+            Duration = 2
+        })
     end
+end
 
-    if correctModel then
-        for _, part in pairs(correctModel:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.BrickColor = BrickColor.new("Grime")
-            end
+-- Button to Apply Highlight
+Tab:CreateButton({
+    Name = "Apply Highlight",
+    Callback = function()
+        if selectedModel then
+            local color = selectedModel.Name == "Correct" and "Dark stone grey" or "Terra Cotta"
+            changeModelColor(selectedModel, color)
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Please select a model first.",
+                Duration = 2
+            })
         end
-    else
-        print("Model 'Correct' not found.")
     end
-end)
+})
