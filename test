@@ -1,13 +1,13 @@
 -- Load Rayfield UI Library
 local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+
+-- Create the main UI window
 local Window = Rayfield:CreateWindow({
     Name = "Glass Model Highlighter",
     LoadingTitle = "Loading UI...",
     LoadingSubtitle = "by lokee4x",
     ConfigurationSaving = {
         Enabled = false,
-        FolderName = "GlassUI",
-        FileName = "Config"
     },
     Discord = {
         Enabled = false,
@@ -15,13 +15,31 @@ local Window = Rayfield:CreateWindow({
     KeySystem = false
 })
 
--- Create a Section for Model Highlighting
-local Tab = Window:CreateTab("Model Highlighter", 4483362458) -- Glass Icon
-local Section = Tab:CreateSection("Highlight Options")
+-- Create Tabs
+local MainTab = Window:CreateTab("Home", 4483362458) -- Home Icon
+local HighlightTab = Window:CreateTab("Highlight", 4483362458) -- Glass Icon
+
+-- Create Home Section
+MainTab:CreateSection("Welcome")
+MainTab:CreateParagraph({
+    Title = "Glass Model Highlighter",
+    Content = "Use this UI to highlight models in the game."
+})
+
+-- Navigation Button to Highlight Tab
+MainTab:CreateButton({
+    Name = "Go to Highlight Options",
+    Callback = function()
+        Window:SelectTab(HighlightTab)
+    end
+})
+
+-- Highlight Section
+HighlightTab:CreateSection("Highlight Models")
 
 -- Model Selection Dropdown
 local selectedModel = nil
-local modelDropdown = Tab:CreateDropdown({
+local modelDropdown = HighlightTab:CreateDropdown({
     Name = "Select a Model",
     Options = {"Correct", "Wrong"},
     Callback = function(selected)
@@ -39,6 +57,15 @@ local modelDropdown = Tab:CreateDropdown({
                 Duration = 2
             })
         end
+    end
+})
+
+-- Color Picker for Custom Highlighting
+local highlightColor = "Bright red"
+HighlightTab:CreateColorPicker({
+    Name = "Select Highlight Color",
+    Callback = function(color)
+        highlightColor = color
     end
 })
 
@@ -64,13 +91,12 @@ local function changeModelColor(model, colorName)
     end
 end
 
--- Button to Apply Highlight
-Tab:CreateButton({
+-- Apply Highlight Button
+HighlightTab:CreateButton({
     Name = "Apply Highlight",
     Callback = function()
         if selectedModel then
-            local color = selectedModel.Name == "Correct" and "Dark stone grey" or "Terra Cotta"
-            changeModelColor(selectedModel, color)
+            changeModelColor(selectedModel, highlightColor)
         else
             Rayfield:Notify({
                 Title = "Error",
@@ -78,5 +104,13 @@ Tab:CreateButton({
                 Duration = 2
             })
         end
+    end
+})
+
+-- Back Button to Home
+HighlightTab:CreateButton({
+    Name = "⬅ Back to Home",
+    Callback = function()
+        Window:SelectTab(MainTab)
     end
 })
