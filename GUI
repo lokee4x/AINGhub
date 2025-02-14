@@ -10,7 +10,7 @@ mainFrame.Position = UDim2.new(0.5, -200, 0.3, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 25, 50)
 mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
-mainFrame.Draggable = true -- Make it movable
+mainFrame.Draggable = true -- UI is draggable
 
 -- Top Bar
 local topBar = Instance.new("Frame", mainFrame)
@@ -25,7 +25,7 @@ titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 titleLabel.TextSize = 14
 titleLabel.BackgroundTransparency = 1
 
--- ✅ Improved Close Button
+-- ✅ Close Button (Fixed)
 local closeButton = Instance.new("TextButton", topBar)
 closeButton.Size = UDim2.new(0, 30, 1, 0)
 closeButton.Position = UDim2.new(1, -30, 0, 0)
@@ -33,7 +33,7 @@ closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 0, 0)
 closeButton.BackgroundTransparency = 1
 closeButton.MouseButton1Click:Connect(function()
-    gui:Destroy() -- Properly closes the GUI
+    gui:Destroy() -- Properly closes the UI
 end)
 
 -- Sidebar
@@ -55,7 +55,7 @@ otherButton.Text = "Other"
 otherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 otherButton.BackgroundColor3 = Color3.fromRGB(120, 50, 200)
 
--- Content Area
+-- Content Area (Main Tab)
 local contentFrame = Instance.new("Frame", mainFrame)
 contentFrame.Size = UDim2.new(1, -100, 1, -30)
 contentFrame.Position = UDim2.new(0, 100, 0, 30)
@@ -77,7 +77,7 @@ moneyButton.Position = UDim2.new(0.55, 0, 0.1, 0)
 moneyButton.Text = "Add Money"
 moneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 
--- ✅ Improved Highlight Paths Button
+-- ✅ Fixed Highlight Paths Button
 local highlightButton = Instance.new("TextButton", contentFrame)
 highlightButton.Size = UDim2.new(0.8, 0, 0.2, 0)
 highlightButton.Position = UDim2.new(0.1, 0, 0.4, 0)
@@ -85,27 +85,32 @@ highlightButton.Text = "Highlight Paths"
 highlightButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
 
 highlightButton.MouseButton1Click:Connect(function()
-    local correctModel = workspace:FindFirstChild("Glasses") and workspace.Glasses:FindFirstChild("Correct")
-    local wrongModel = workspace:FindFirstChild("Glasses") and workspace.Glasses:FindFirstChild("Wrong")
+    local glasses = workspace:FindFirstChild("Glasses")
+    if glasses then
+        local correctModel = glasses:FindFirstChild("Correct")
+        local wrongModel = glasses:FindFirstChild("Wrong")
 
-    if wrongModel then
-        for _, part in pairs(wrongModel:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.BrickColor = BrickColor.new("Bright red") 
+        if wrongModel then
+            for _, part in pairs(wrongModel:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.BrickColor = BrickColor.new("Bright red") 
+                end
             end
+        else
+            warn("Wrong model not found.")
+        end
+
+        if correctModel then
+            for _, part in pairs(correctModel:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.BrickColor = BrickColor.new("Bright green") 
+                end
+            end
+        else
+            warn("Correct model not found.")
         end
     else
-        warn("Wrong model not found.")
-    end
-
-    if correctModel then
-        for _, part in pairs(correctModel:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.BrickColor = BrickColor.new("Bright green") 
-            end
-        end
-    else
-        warn("Correct model not found.")
+        warn("Glasses model not found in workspace.")
     end
 end)
 
@@ -116,6 +121,7 @@ otherContentFrame.Position = UDim2.new(0, 100, 0, 30)
 otherContentFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
 otherContentFrame.Visible = false -- Initially hidden
 
+-- Infinite Yield Button
 local infiniteYieldButton = Instance.new("TextButton", otherContentFrame)
 infiniteYieldButton.Size = UDim2.new(0.8, 0, 0.2, 0)
 infiniteYieldButton.Position = UDim2.new(0.1, 0, 0.2, 0)
