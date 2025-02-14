@@ -12,11 +12,13 @@ local ESPButton = Instance.new("TextButton")
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Main Frame (Background)
+-- Main Frame (Background) - Now Draggable!
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 MainFrame.Size = UDim2.new(0, 300, 0, 200)
 MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
+MainFrame.Active = true  -- Allows dragging
+MainFrame.Draggable = true -- Makes it draggable
 
 -- Title Bar
 Title.Parent = MainFrame
