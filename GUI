@@ -1,108 +1,81 @@
--- Services
-local TweenService = game:GetService("TweenService")
+-- 🛠️ Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 
--- GUI Creation
+-- 🎨 UI Setup
 local ScreenGui = Instance.new("ScreenGui")
-local MainFrame = Instance.new("Frame")
-local Title = Instance.new("TextLabel")
-local MinimizeButton = Instance.new("TextButton")
-local CloseButton = Instance.new("TextButton")
-local MinimizedIcon = Instance.new("TextButton")
-local Sidebar = Instance.new("Frame")
-local MainTab = Instance.new("TextButton")
-local ESPTab = Instance.new("TextButton")
-local ContentFrame = Instance.new("Frame")
-local ESPContentFrame = Instance.new("Frame")
-local ESPButton = Instance.new("TextButton")
-
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Main Frame
+local MainFrame = Instance.new("Frame")
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
-MainFrame.Size = UDim2.new(0, 350, 0, 200)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Active = true  
-MainFrame.Draggable = true 
+MainFrame.Size = UDim2.new(0, 200, 0, 100)
+MainFrame.Position = UDim2.new(0.05, 0, 0.1, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
 
--- Title Bar
+local Title = Instance.new("TextLabel")
 Title.Parent = MainFrame
-Title.Text = "AING Hub"
-Title.TextSize = 16
-Title.Size = UDim2.new(1, 0, 0.15, 0)
+Title.Text = "AING ESP"
+Title.Size = UDim2.new(1, 0, 0.3, 0)
 Title.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.TextSize = 16
 
--- Minimize Button
-MinimizeButton.Parent = Title
-MinimizeButton.Text = "-"
-MinimizeButton.Size = UDim2.new(0.1, 0, 1, 0)
-MinimizeButton.Position = UDim2.new(0.8, 0, 0, 0)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 150, 50)
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+local ESPButton = Instance.new("TextButton")
+ESPButton.Parent = MainFrame
+ESPButton.Text = "ESP: OFF"
+ESPButton.Size = UDim2.new(0.8, 0, 0.4, 0)
+ESPButton.Position = UDim2.new(0.1, 0, 0.5, 0)
+ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+ESPButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
--- Close Button
-CloseButton.Parent = Title
-CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0.1, 0, 1, 0)
-CloseButton.Position = UDim2.new(0.9, 0, 0, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+-- 🎯 ESP Functionality
+local espEnabled = false
 
--- Minimized Icon
-MinimizedIcon.Parent = ScreenGui
-MinimizedIcon.Text = "AING"
-MinimizedIcon.Size = UDim2.new(0, 50, 0, 50)
-MinimizedIcon.Position = UDim2.new(0.05, 0, 0.05, 0)
-MinimizedIcon.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-MinimizedIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizedIcon.Visible = false
-MinimizedIcon.Active = true  
-MinimizedIcon.Draggable = true 
+local function createESP(player)
+    if player == Players.LocalPlayer then return end  
+    if not player.Character then return end
+    local character = player.Character:FindFirstChild("HumanoidRootPart")
+    if not character then return end
 
--- Sidebar
-Sidebar.Parent = MainFrame
-Sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-Sidebar.Size = UDim2.new(0.3, 0, 0.85, 0)
-Sidebar.Position = UDim2.new(0, 0, 0.15, 0)
+    local billboard = Instance.new("BillboardGui", character)
+    billboard.Name = "ESP"
+    billboard.Size = UDim2.new(0, 100, 0, 50)
+    billboard.StudsOffset = Vector3.new(0, 3, 0)
+    billboard.AlwaysOnTop = true
 
--- ESP Tab (Now on top)
-ESPTab.Parent = Sidebar
-ESPTab.Text = "ESP"
-ESPTab.Size = UDim2.new(1, 0, 0.2, 0)
-ESPTab.Position = UDim2.new(0, 0, 0.05, 0)
-ESPTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-ESPTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+    local nameLabel = Instance.new("TextLabel", billboard)
+    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+    nameLabel.BackgroundTransparency = 1
+    nameLabel.Text = player.Name
+    nameLabel.TextColor3 = Color3.fromRGB(255, 0, 0)
+    nameLabel.TextScaled = true
+end
 
--- Main Tab (Now below ESP Tab)
-MainTab.Parent = Sidebar
-MainTab.Text = "Main"
-MainTab.Size = UDim2.new(1, 0, 0.2, 0)
-MainTab.Position = UDim2.new(0, 0, 0.3, 0)
-MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-MainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+local function removeESP(player)
+    if player.Character then
+        local esp = player.Character:FindFirstChild("ESP")
+        if esp then
+            esp:Destroy()
+        end
+    end
+end
 
--- Content Frames
-ContentFrame.Parent = MainFrame
-ContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
-ContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
-ContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
+ESPButton.MouseButton1Click:Connect(function()
+    espEnabled = not espEnabled
+    ESPButton.Text = espEnabled and "ESP: ON" or "ESP: OFF"
+    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
 
-ESPContentFrame.Parent = MainFrame
-ESPContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
-ESPContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
-ESPContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
-ESPContentFrame.Visible = false
-
--- Tab Switching
-MainTab.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = true
-    ESPContentFrame.Visible = false
-end)
-
-ESPTab.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = false
-    ESPContentFrame.Visible = true
+    if espEnabled then
+        for _, player in pairs(Players:GetPlayers()) do
+            createESP(player)
+        end
+        Players.PlayerAdded:Connect(createESP)
+        Players.PlayerRemoving:Connect(removeESP)
+    else
+        for _, player in pairs(Players:GetPlayers()) do
+            removeESP(player)
+        end
+    end
 end)
