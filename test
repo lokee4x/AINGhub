@@ -7,6 +7,7 @@ local MainTab = Instance.new("TextButton")
 local ESPTab = Instance.new("TextButton")
 local ContentFrame = Instance.new("Frame")
 local PathButton = Instance.new("TextButton")
+local ESPButton = Instance.new("TextButton")
 
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -19,7 +20,7 @@ MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
 
 -- Title Bar
 Title.Parent = MainFrame
-Title.Text = "Sm0ckey Hub"
+Title.Text = "AING Hub"
 Title.TextSize = 16
 Title.Size = UDim2.new(1, 0, 0.15, 0)
 Title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
@@ -90,7 +91,11 @@ PathButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- ESP Function with Team Check
+-- ESP Variables
+local ESPEnabled = false
+local ESPObjects = {}
+
+-- ESP Function
 function createESP(player)
     if player == game.Players.LocalPlayer then return end
 
@@ -119,11 +124,14 @@ function createESP(player)
                 nameLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green for teammates
             end
         end
+
+        -- Store ESP objects
+        ESPObjects[player] = billboard
     end
 end
 
--- ESP Activation on ESP Tab Click
-ESPTab.MouseButton1Click:Connect(function()
+-- Function to enable ESP
+function enableESP()
     for _, player in pairs(game.Players:GetPlayers()) do
         createESP(player)
     end
@@ -133,4 +141,35 @@ ESPTab.MouseButton1Click:Connect(function()
             createESP(player)
         end)
     end)
+end
+
+-- Function to disable ESP
+function disableESP()
+    for _, obj in pairs(ESPObjects) do
+        if obj then
+            obj:Destroy()
+        end
+    end
+    ESPObjects = {}
+end
+
+-- ESP Toggle Button
+ESPButton.Parent = ContentFrame
+ESPButton.Text = "ESP: OFF"
+ESPButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+ESPButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+
+ESPButton.MouseButton1Click:Connect(function()
+    ESPEnabled = not ESPEnabled
+
+    if ESPEnabled then
+        ESPButton.Text = "ESP: ON"
+        ESPButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
+        enableESP()
+    else
+        ESPButton.Text = "ESP: OFF"
+        ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        disableESP()
+    end
 end)
