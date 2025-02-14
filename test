@@ -1,52 +1,77 @@
--- Load the Rayfield Library
-local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+-- GUI Creation
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local Title = Instance.new("TextLabel")
+local MoneyButton = Instance.new("TextButton")
+local PathButton = Instance.new("TextButton")
 
--- Create the main window
-local Window = Rayfield:CreateWindow({
-    Name = "Glass Model Highlighter",
-    LoadingTitle = "Loading UI...",
-    LoadingSubtitle = "by lokee4x",
-    ConfigurationSaving = {
-        Enabled = false,
-    },
-    Discord = {
-        Enabled = false,
-    },
-    KeySystem = false,
-})
+-- Parent GUI to the player
+ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Create a tab and section
-local Tab = Window:CreateTab("Glasses", 4483362458) -- Glass icon
-local Section = Tab:CreateSection("Highlight Options")
+-- Frame Properties
+Frame.Parent = ScreenGui
+Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.Position = UDim2.new(0.3, 0, 0.3, 0)
+Frame.Size = UDim2.new(0, 200, 0, 150)
 
--- Function to change model colors
-local function changeModelColor(modelName, colorName)
-    local model = workspace.Glasses:FindFirstChild(modelName)
-    if model then
-        for _, part in pairs(model:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.BrickColor = BrickColor.new(colorName)
+-- Title Properties
+Title.Parent = Frame
+Title.Text = "Custom Hub"
+Title.Size = UDim2.new(1, 0, 0.2, 0)
+Title.TextColor3 = Color3.fromRGB(255, 255, 255)
+Title.BackgroundTransparency = 1
+
+-- Money Button Properties
+MoneyButton.Parent = Frame
+MoneyButton.Text = "Get Money"
+MoneyButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+MoneyButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+MoneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+
+-- Path Button Properties
+PathButton.Parent = Frame
+PathButton.Text = "Show Path"
+PathButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+PathButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+PathButton.BackgroundColor3 = Color3.fromRGB(200, 100, 0)
+
+-- Money Button Function
+MoneyButton.MouseButton1Click:Connect(function()
+    local args = {
+        [1] = "1e9" -- 1 Billion Money (Adjustable)
+    }
+
+    game:GetService("ReplicatedStorage").CratesUtilities.Remotes.GiveReward:FireServer(unpack(args))
+end)
+
+-- Path Button Function
+PathButton.MouseButton1Click:Connect(function()
+    local glassesFolder = workspace:FindFirstChild("Glasses")
+    
+    if glassesFolder then
+        local correctModel = glassesFolder:FindFirstChild("Correct")
+        local wrongModel = glassesFolder:FindFirstChild("Wrong")
+
+        if wrongModel then
+            for _, part in pairs(wrongModel:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.BrickColor = BrickColor.new("Bright red") -- Incorrect Path
+                end
             end
+        else
+            warn("Wrong model not found")
         end
-        Rayfield:Notify({
-            Title = "Success",
-            Content = modelName .. " model highlighted with " .. colorName .. " color.",
-            Duration = 5,
-        })
-    else
-        Rayfield:Notify({
-            Title = "Error",
-            Content = "Model '" .. modelName .. "' not found.",
-            Duration = 5,
-        })
-    end
-end
 
--- Create a button to show the path
-Tab:CreateButton({
-    Name = "Show Path",
-    Callback = function()
-        changeModelColor("Wrong", "Terra Cotta")
-        changeModelColor("Correct", "Dark stone grey") -- Ensure "Dark stone grey" is a valid BrickColor
-    end,
-})
+        if correctModel then
+            for _, part in pairs(correctModel:GetDescendants()) do
+                if part:IsA("BasePart") then
+                    part.BrickColor = BrickColor.new("Bright green") -- Correct Path
+                end
+            end
+        else
+            warn("Correct model not found")
+        end
+    else
+        warn("Glasses folder not found")
+    end
+end)
