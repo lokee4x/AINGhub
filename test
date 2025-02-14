@@ -1,8 +1,9 @@
--- AING GUI Creation
+-- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
 local MinimizeButton = Instance.new("TextButton")
+local CloseButton = Instance.new("TextButton")
 local MinimizedIcon = Instance.new("TextButton")
 local Sidebar = Instance.new("Frame")
 local MainTab = Instance.new("TextButton")
@@ -11,11 +12,15 @@ local ContentFrame = Instance.new("Frame")
 local ESPContentFrame = Instance.new("Frame")
 local PathButton = Instance.new("TextButton")
 local ESPButton = Instance.new("TextButton")
+local WarningFrame = Instance.new("Frame")
+local WarningText = Instance.new("TextLabel")
+local YesButton = Instance.new("TextButton")
+local NoButton = Instance.new("TextButton")
 
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Main Frame (Draggable & Minimizable)
+-- Main Frame (Draggable & Closable)
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 MainFrame.Size = UDim2.new(0, 300, 0, 200)
@@ -35,9 +40,17 @@ Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 MinimizeButton.Parent = Title
 MinimizeButton.Text = "-"
 MinimizeButton.Size = UDim2.new(0.1, 0, 1, 0)
-MinimizeButton.Position = UDim2.new(0.9, 0, 0, 0)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+MinimizeButton.Position = UDim2.new(0.8, 0, 0, 0)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 150, 50)
 MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Close Button
+CloseButton.Parent = Title
+CloseButton.Text = "X"
+CloseButton.Size = UDim2.new(0.1, 0, 1, 0)
+CloseButton.Position = UDim2.new(0.9, 0, 0, 0)
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 -- Minimized Icon (Hidden Initially)
 MinimizedIcon.Parent = ScreenGui
@@ -58,7 +71,7 @@ Sidebar.Position = UDim2.new(0, 0, 0.15, 0)
 
 -- Main Tab Button
 MainTab.Parent = Sidebar
-MainTab.Text = "Glass Bridge"
+MainTab.Text = "Main"
 MainTab.Size = UDim2.new(1, 0, 0.2, 0)
 MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
 MainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -82,7 +95,7 @@ ESPContentFrame.Parent = MainFrame
 ESPContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
 ESPContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
 ESPContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
-ESPContentFrame.Visible = false -- Hide initially
+ESPContentFrame.Visible = false
 
 -- Path Button (Centered)
 PathButton.Parent = ContentFrame
@@ -98,6 +111,33 @@ ESPButton.Size = UDim2.new(0.8, 0, 0.3, 0)
 ESPButton.Position = UDim2.new(0.1, 0, 0.35, 0)
 ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 
+-- Warning Frame (Hidden Initially)
+WarningFrame.Parent = ScreenGui
+WarningFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+WarningFrame.Size = UDim2.new(0, 200, 0, 100)
+WarningFrame.Position = UDim2.new(0.4, 0, 0.4, 0)
+WarningFrame.Visible = false
+
+-- Warning Text
+WarningText.Parent = WarningFrame
+WarningText.Text = "Are you sure you want to close?"
+WarningText.Size = UDim2.new(1, 0, 0.5, 0)
+WarningText.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Yes Button
+YesButton.Parent = WarningFrame
+YesButton.Text = "Yes"
+YesButton.Size = UDim2.new(0.5, 0, 0.3, 0)
+YesButton.Position = UDim2.new(0, 0, 0.6, 0)
+YesButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+
+-- No Button
+NoButton.Parent = WarningFrame
+NoButton.Text = "No"
+NoButton.Size = UDim2.new(0.5, 0, 0.3, 0)
+NoButton.Position = UDim2.new(0.5, 0, 0.6, 0)
+NoButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+
 -- Tab Switching Logic
 MainTab.MouseButton1Click:Connect(function()
     ContentFrame.Visible = true
@@ -109,14 +149,26 @@ ESPTab.MouseButton1Click:Connect(function()
     ESPContentFrame.Visible = true
 end)
 
--- Minimize Button Function
+-- Minimize Function
 MinimizeButton.MouseButton1Click:Connect(function()
     MainFrame.Visible = false
     MinimizedIcon.Visible = true
 end)
 
--- Restore GUI when clicking Minimized Icon
 MinimizedIcon.MouseButton1Click:Connect(function()
     MainFrame.Visible = true
     MinimizedIcon.Visible = false
+end)
+
+-- Close Warning Function
+CloseButton.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = true
+end)
+
+YesButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+end)
+
+NoButton.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = false
 end)
