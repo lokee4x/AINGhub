@@ -1,0 +1,71 @@
+-- Inisialisasi Remote
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Remotes = {
+    ClaimSpecialEventReward = ReplicatedStorage:FindFirstChild("Communication"):FindFirstChild("Quests"):FindFirstChild("ClaimSpecialEventReward"),
+    ClaimQuestReward = ReplicatedStorage:FindFirstChild("Communication"):FindFirstChild("Quests"):FindFirstChild("ClaimQuestReward"),
+    ObbyCompleted = ReplicatedStorage:FindFirstChild("Communication"):FindFirstChild("ObbyCompleted")
+}
+
+-- Fungsi untuk memanggil remote
+local function invokeRemote(remote)
+    if remote and remote:IsA("RemoteEvent") then
+        remote:FireServer()
+        print("[✅] RemoteEvent dipanggil:", remote.Name)
+    elseif remote and remote:IsA("RemoteFunction") then
+        local result = remote:InvokeServer()
+        print("[✅] RemoteFunction dipanggil:", remote.Name, "| Hasil:", result)
+    else
+        warn("[❌] Remote tidak ditemukan atau bukan RemoteEvent/RemoteFunction")
+    end
+end
+
+-- GUI Sederhana & User-Friendly
+local ScreenGui = Instance.new("ScreenGui")
+local Frame = Instance.new("Frame")
+local UIListLayout = Instance.new("UIListLayout")
+local CloseButton = Instance.new("TextButton")
+
+ScreenGui.Parent = game.CoreGui
+Frame.Parent = ScreenGui
+Frame.Size = UDim2.new(0, 300, 0, 250)
+Frame.Position = UDim2.new(0.5, -150, 0.5, -125)
+Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+Frame.BorderSizePixel = 2
+Frame.Active = true
+Frame.Draggable = true
+
+UIListLayout.Parent = Frame
+UIListLayout.Padding = UDim.new(0, 5)
+UIListLayout.FillDirection = Enum.FillDirection.Vertical
+
+-- Tombol Tutup
+CloseButton.Parent = Frame
+CloseButton.Size = UDim2.new(1, -10, 0, 30)
+CloseButton.Text = "❌ Close GUI"
+CloseButton.TextSize = 16
+CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
+    print("[❌] GUI Ditutup, script berhenti beroperasi.")
+end)
+
+-- Membuat Tombol
+local function createButton(name, remote)
+    local button = Instance.new("TextButton")
+    button.Parent = Frame
+    button.Size = UDim2.new(1, -10, 0, 40)
+    button.Text = "✅ " .. name
+    button.TextSize = 14
+    button.BackgroundColor3 = Color3.fromRGB(60, 120, 60)
+    button.TextColor3 = Color3.fromRGB(255, 255, 255)
+    button.MouseButton1Click:Connect(function()
+        invokeRemote(remote)
+    end)
+end
+
+createButton("Claim Special Event Reward", Remotes.ClaimSpecialEventReward)
+createButton("Claim Quest Reward", Remotes.ClaimQuestReward)
+createButton("Complete Obby", Remotes.ObbyCompleted)
+
+print("[✅] Script Loaded - GUI Dibuka")
