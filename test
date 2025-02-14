@@ -1,7 +1,7 @@
--- Load Rayfield UI Library
-local Rayfield = loadstring(game:HttpGet("https://sirius.menu/rayfield"))()
+-- Load the Rayfield Library
+local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 
--- Create the main UI window
+-- Create the main window
 local Window = Rayfield:CreateWindow({
     Name = "Glass Model Highlighter",
     LoadingTitle = "Loading UI...",
@@ -12,65 +12,16 @@ local Window = Rayfield:CreateWindow({
     Discord = {
         Enabled = false,
     },
-    KeySystem = false
+    KeySystem = false,
 })
 
--- Create Tabs
-local MainTab = Window:CreateTab("Home", 4483362458) -- Home Icon
-local HighlightTab = Window:CreateTab("Highlight", 4483362458) -- Glass Icon
+-- Create a tab and section
+local Tab = Window:CreateTab("Glasses", 4483362458) -- Glass icon
+local Section = Tab:CreateSection("Highlight Options")
 
--- Create Home Section
-MainTab:CreateSection("Welcome")
-MainTab:CreateParagraph({
-    Title = "Glass Model Highlighter",
-    Content = "Use this UI to highlight models in the game."
-})
-
--- Navigation Button to Highlight Tab
-MainTab:CreateButton({
-    Name = "Go to Highlight Options",
-    Callback = function()
-        Window:SelectTab(HighlightTab)
-    end
-})
-
--- Highlight Section
-HighlightTab:CreateSection("Highlight Models")
-
--- Model Selection Dropdown
-local selectedModel = nil
-local modelDropdown = HighlightTab:CreateDropdown({
-    Name = "Select a Model",
-    Options = {"Correct", "Wrong"},
-    Callback = function(selected)
-        selectedModel = workspace.Glasses:FindFirstChild(selected)
-        if selectedModel then
-            Rayfield:Notify({
-                Title = "Model Selected",
-                Content = "You selected: " .. selected,
-                Duration = 2
-            })
-        else
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Model '" .. selected .. "' not found.",
-                Duration = 2
-            })
-        end
-    end
-})
-
--- Color Picker for Custom Highlighting
-local highlightColor = "Bright red"
-HighlightTab:CreateColorPicker({
-    Name = "Select Highlight Color",
-    Callback = function(color)
-        highlightColor = color
-    end
-})
-
--- Function to Change Model Color
-local function changeModelColor(model, colorName)
+-- Function to change model colors
+local function changeModelColor(modelName, colorName)
+    local model = workspace.Glasses:FindFirstChild(modelName)
     if model then
         for _, part in pairs(model:GetDescendants()) do
             if part:IsA("BasePart") then
@@ -79,38 +30,23 @@ local function changeModelColor(model, colorName)
         end
         Rayfield:Notify({
             Title = "Success",
-            Content = "Highlighted " .. model.Name .. " with color " .. colorName,
-            Duration = 2
+            Content = modelName .. " model highlighted with " .. colorName .. " color.",
+            Duration = 5,
         })
     else
         Rayfield:Notify({
             Title = "Error",
-            Content = "No model selected or model not found.",
-            Duration = 2
+            Content = "Model '" .. modelName .. "' not found.",
+            Duration = 5,
         })
     end
 end
 
--- Apply Highlight Button
-HighlightTab:CreateButton({
-    Name = "Apply Highlight",
+-- Create a button to show the path
+Tab:CreateButton({
+    Name = "Show Path",
     Callback = function()
-        if selectedModel then
-            changeModelColor(selectedModel, highlightColor)
-        else
-            Rayfield:Notify({
-                Title = "Error",
-                Content = "Please select a model first.",
-                Duration = 2
-            })
-        end
-    end
-})
-
--- Back Button to Home
-HighlightTab:CreateButton({
-    Name = "⬅ Back to Home",
-    Callback = function()
-        Window:SelectTab(MainTab)
-    end
+        changeModelColor("Wrong", "Terra Cotta")
+        changeModelColor("Correct", "Dark stone grey") -- Ensure "Dark stone grey" is a valid BrickColor
+    end,
 })
