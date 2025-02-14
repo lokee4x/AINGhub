@@ -1,4 +1,4 @@
--- GUI Sederhana dengan Close Button & Title
+-- GUI Sederhana dengan Title di Tengah & Close Button
 local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local CloseButton = Instance.new("TextButton")
@@ -13,7 +13,7 @@ Frame.BorderSizePixel = 2
 Frame.Active = true
 Frame.Draggable = true
 
--- Title
+-- Title di Tengah
 TitleLabel.Parent = Frame
 TitleLabel.Size = UDim2.new(1, -40, 1, 0)
 TitleLabel.Position = UDim2.new(0, 0, 0, 0)
@@ -22,11 +22,10 @@ TitleLabel.TextSize = 18
 TitleLabel.BackgroundTransparency = 1
 TitleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 TitleLabel.Font = Enum.Font.SourceSansBold
-TitleLabel.TextXAlignment = Enum.TextXAlignment.Left
+TitleLabel.TextXAlignment = Enum.TextXAlignment.Center
 TitleLabel.TextYAlignment = Enum.TextYAlignment.Center
-TitleLabel.PaddingLeft = UDim.new(0, 10)
 
--- Close Button
+-- Close Button di Pojok Kanan
 CloseButton.Parent = Frame
 CloseButton.Size = UDim2.new(0, 30, 1, 0)
 CloseButton.Position = UDim2.new(1, -30, 0, 0)
