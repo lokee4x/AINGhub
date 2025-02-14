@@ -1,102 +1,92 @@
+-- Create UI
 local player = game.Players.LocalPlayer
-local gui = Instance.new("ScreenGui")
-gui.Parent = player:WaitForChild("PlayerGui")
+local gui = Instance.new("ScreenGui", player.PlayerGui)
+gui.Name = "AING"
 
 -- Main Frame
-local mainFrame = Instance.new("Frame")
+local mainFrame = Instance.new("Frame", gui)
 mainFrame.Size = UDim2.new(0, 400, 0, 250)
-mainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 40)
+mainFrame.Position = UDim2.new(0.5, -200, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(20, 25, 50)
+mainFrame.BorderSizePixel = 0
 mainFrame.Active = true
-mainFrame.Draggable = true
-mainFrame.Parent = gui
+mainFrame.Draggable = true -- Make it movable
 
--- Title
-local title = Instance.new("TextLabel")
-title.Size = UDim2.new(1, 0, 0, 30)
-title.BackgroundColor3 = Color3.fromRGB(10, 10, 30)
-title.Text = "AING"
-title.TextColor3 = Color3.fromRGB(255, 255, 255)
-title.Font = Enum.Font.SourceSansBold
-title.TextSize = 20
-title.Parent = mainFrame
+-- Top Bar
+local topBar = Instance.new("Frame", mainFrame)
+topBar.Size = UDim2.new(1, 0, 0, 30)
+topBar.BackgroundColor3 = Color3.fromRGB(10, 15, 30)
 
--- Tabs Section
-local tabsFrame = Instance.new("Frame")
-tabsFrame.Size = UDim2.new(0, 100, 1, -30)
-tabsFrame.Position = UDim2.new(0, 0, 0, 30)
-tabsFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 30)
-tabsFrame.Parent = mainFrame
+local titleLabel = Instance.new("TextLabel", topBar)
+titleLabel.Size = UDim2.new(1, -30, 1, 0)
+titleLabel.Position = UDim2.new(0, 5, 0, 0)
+titleLabel.Text = "AING"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.TextSize = 14
+titleLabel.BackgroundTransparency = 1
 
--- Main Tab Button
-local mainTab = Instance.new("TextButton")
-mainTab.Size = UDim2.new(1, 0, 0, 40)
-mainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
-mainTab.Text = "Main"
-mainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-mainTab.Font = Enum.Font.SourceSansBold
-mainTab.TextSize = 18
-mainTab.Parent = tabsFrame
-
--- Other Tab Button
-local otherTab = Instance.new("TextButton")
-otherTab.Size = UDim2.new(1, 0, 0, 40)
-otherTab.Position = UDim2.new(0, 0, 0, 40)
-otherTab.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
-otherTab.Text = "Other"
-otherTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-otherTab.Font = Enum.Font.SourceSansBold
-otherTab.TextSize = 18
-otherTab.Parent = tabsFrame
-
--- Main Tab Content
-local mainContent = Instance.new("Frame")
-mainContent.Size = UDim2.new(1, -100, 1, -30)
-mainContent.Position = UDim2.new(0, 100, 0, 30)
-mainContent.BackgroundTransparency = 1
-mainContent.Parent = mainFrame
-
--- Other Tab Content
-local otherContent = Instance.new("Frame")
-otherContent.Size = UDim2.new(1, -100, 1, -30)
-otherContent.Position = UDim2.new(0, 100, 0, 30)
-otherContent.BackgroundTransparency = 1
-otherContent.Visible = false
-otherContent.Parent = mainFrame
-
--- Add Amount TextBox
-local addAmount = Instance.new("TextBox")
-addAmount.Size = UDim2.new(0.45, -10, 0, 40)
-addAmount.Position = UDim2.new(0, 10, 0, 10)
-addAmount.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-addAmount.Text = "$ $ $ $"
-addAmount.TextColor3 = Color3.fromRGB(255, 255, 255)
-addAmount.TextTransparency = 0.3
-addAmount.Font = Enum.Font.SourceSansBold
-addAmount.TextSize = 18
-addAmount.Parent = mainContent
-
--- Add Money Button
-local addMoney = Instance.new("TextButton")
-addMoney.Size = UDim2.new(0.45, -10, 0, 40)
-addMoney.Position = UDim2.new(0.5, 0, 0, 10)
-addMoney.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-addMoney.Text = "Add Money"
-addMoney.TextColor3 = Color3.fromRGB(255, 255, 255)
-addMoney.Font = Enum.Font.SourceSansBold
-addMoney.TextSize = 18
-addMoney.Parent = mainContent
-
-addMoney.MouseButton1Click:Connect(function()
-    local amount = tonumber(addAmount.Text) or 0
-    print("Adding Money: $" .. amount)
-    -- Add money logic here (modify as per your game setup)
+-- ✅ Improved Close Button
+local closeButton = Instance.new("TextButton", topBar)
+closeButton.Size = UDim2.new(0, 30, 1, 0)
+closeButton.Position = UDim2.new(1, -30, 0, 0)
+closeButton.Text = "X"
+closeButton.TextColor3 = Color3.fromRGB(255, 0, 0)
+closeButton.BackgroundTransparency = 1
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy() -- Properly closes the GUI
 end)
 
--- Highlight Paths Button
+-- Sidebar
+local sidebar = Instance.new("Frame", mainFrame)
+sidebar.Size = UDim2.new(0, 100, 1, -30)
+sidebar.Position = UDim2.new(0, 0, 0, 30)
+sidebar.BackgroundColor3 = Color3.fromRGB(15, 20, 40)
+
+local mainButton = Instance.new("TextButton", sidebar)
+mainButton.Size = UDim2.new(1, 0, 0, 40)
+mainButton.Text = "Main"
+mainButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+mainButton.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
+
+local otherButton = Instance.new("TextButton", sidebar)
+otherButton.Size = UDim2.new(1, 0, 0, 40)
+otherButton.Position = UDim2.new(0, 0, 0, 40)
+otherButton.Text = "Other"
+otherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+otherButton.BackgroundColor3 = Color3.fromRGB(120, 50, 200)
+
+-- Content Area
+local contentFrame = Instance.new("Frame", mainFrame)
+contentFrame.Size = UDim2.new(1, -100, 1, -30)
+contentFrame.Position = UDim2.new(0, 100, 0, 30)
+contentFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
+
+-- Money Input Box
+local moneyInput = Instance.new("TextBox", contentFrame)
+moneyInput.Size = UDim2.new(0.4, 0, 0.2, 0)
+moneyInput.Position = UDim2.new(0.05, 0, 0.1, 0)
+moneyInput.Text = "$ $ $ $"
+moneyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+moneyInput.BackgroundTransparency = 0.5
+moneyInput.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
+
+-- Add Money Button
+local moneyButton = Instance.new("TextButton", contentFrame)
+moneyButton.Size = UDim2.new(0.4, 0, 0.2, 0)
+moneyButton.Position = UDim2.new(0.55, 0, 0.1, 0)
+moneyButton.Text = "Add Money"
+moneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+
+-- ✅ Improved Highlight Paths Button
+local highlightButton = Instance.new("TextButton", contentFrame)
+highlightButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+highlightButton.Position = UDim2.new(0.1, 0, 0.4, 0)
+highlightButton.Text = "Highlight Paths"
+highlightButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
 highlightButton.MouseButton1Click:Connect(function()
-    local correctModel = workspace:FindFirstChild("Glasses"):FindFirstChild("Correct")
-    local wrongModel = workspace:FindFirstChild("Glasses"):FindFirstChild("Wrong")
+    local correctModel = workspace:FindFirstChild("Glasses") and workspace.Glasses:FindFirstChild("Correct")
+    local wrongModel = workspace:FindFirstChild("Glasses") and workspace.Glasses:FindFirstChild("Wrong")
 
     if wrongModel then
         for _, part in pairs(wrongModel:GetDescendants()) do
@@ -119,36 +109,38 @@ highlightButton.MouseButton1Click:Connect(function()
     end
 end)
 
-highlightPaths.MouseButton1Click:Connect(function()
-    for _, part in pairs(workspace:GetDescendants()) do
-        if part:IsA("BasePart") then
-            part.BrickColor = BrickColor.new("Bright blue")
-        end
-    end
-end)
+-- Other Tab Content
+local otherContentFrame = Instance.new("Frame", mainFrame)
+otherContentFrame.Size = UDim2.new(1, -100, 1, -30)
+otherContentFrame.Position = UDim2.new(0, 100, 0, 30)
+otherContentFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
+otherContentFrame.Visible = false -- Initially hidden
 
--- Infinite Yield Button
-local infiniteYield = Instance.new("TextButton")
-infiniteYield.Size = UDim2.new(0.9, 0, 0, 40)
-infiniteYield.Position = UDim2.new(0.05, 0, 0, 10)
-infiniteYield.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
-infiniteYield.Text = "Infinite Yield"
-infiniteYield.TextColor3 = Color3.fromRGB(255, 255, 255)
-infiniteYield.Font = Enum.Font.SourceSansBold
-infiniteYield.TextSize = 18
-infiniteYield.Parent = otherContent
+local infiniteYieldButton = Instance.new("TextButton", otherContentFrame)
+infiniteYieldButton.Size = UDim2.new(0.8, 0, 0.2, 0)
+infiniteYieldButton.Position = UDim2.new(0.1, 0, 0.2, 0)
+infiniteYieldButton.Text = "Infinite Yield"
+infiniteYieldButton.BackgroundColor3 = Color3.fromRGB(50, 50, 200)
 
-infiniteYield.MouseButton1Click:Connect(function()
+infiniteYieldButton.MouseButton1Click:Connect(function()
     loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
 end)
 
 -- Tab Switching Logic
-mainTab.MouseButton1Click:Connect(function()
-    mainContent.Visible = true
-    otherContent.Visible = false
+mainButton.MouseButton1Click:Connect(function()
+    contentFrame.Visible = true
+    otherContentFrame.Visible = false
 end)
 
-otherTab.MouseButton1Click:Connect(function()
-    mainContent.Visible = false
-    otherContent.Visible = true
+otherButton.MouseButton1Click:Connect(function()
+    contentFrame.Visible = false
+    otherContentFrame.Visible = true
+end)
+
+-- Add Money Function
+moneyButton.MouseButton1Click:Connect(function()
+    local amount = tonumber(moneyInput.Text) or 0
+    if amount > 0 then
+        game:GetService("ReplicatedStorage").CratesUtilities.Remotes.GiveReward:FireServer(amount)
+    end
 end)
