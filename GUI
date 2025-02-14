@@ -1,14 +1,50 @@
 -- Create UI
 local player = game.Players.LocalPlayer
 local gui = Instance.new("ScreenGui", player.PlayerGui)
-gui.Name = "CustomHub"
+gui.Name = "AING"
+gui.ResetOnSpawn = false
 
 -- Main Frame
 local mainFrame = Instance.new("Frame", gui)
-mainFrame.Size = UDim2.new(0, 400, 0, 250)
+mainFrame.Size = UDim2.new(0, 400, 0, 200)
 mainFrame.Position = UDim2.new(0.5, -200, 0.3, 0)
 mainFrame.BackgroundColor3 = Color3.fromRGB(20, 25, 50)
 mainFrame.BorderSizePixel = 0
+mainFrame.Active = true
+
+-- Dragging functionality
+local dragging, dragInput, dragStart, startPos
+
+local function updateInput(input)
+    local delta = input.Position - dragStart
+    mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+end
+
+mainFrame.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseButton1 then
+        dragging = true
+        dragStart = input.Position
+        startPos = mainFrame.Position
+
+        input.Changed:Connect(function()
+            if input.UserInputState == Enum.UserInputState.End then
+                dragging = false
+            end
+        end)
+    end
+end)
+
+mainFrame.InputChanged:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.MouseMovement then
+        dragInput = input
+    end
+end)
+
+game:GetService("UserInputService").InputChanged:Connect(function(input)
+    if input == dragInput and dragging then
+        updateInput(input)
+    end
+end)
 
 -- Top Bar
 local topBar = Instance.new("Frame", mainFrame)
@@ -51,25 +87,38 @@ contentFrame.Size = UDim2.new(1, -100, 1, -30)
 contentFrame.Position = UDim2.new(0, 100, 0, 30)
 contentFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
 
--- Money Button
-local moneyButton = Instance.new("TextButton", contentFrame)
-moneyButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-moneyButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+-- Row container
+local rowFrame = Instance.new("Frame", contentFrame)
+rowFrame.Size = UDim2.new(0.9, 0, 0.2, 0)
+rowFrame.Position = UDim2.new(0.05, 0, 0.1, 0)
+rowFrame.BackgroundTransparency = 1
+
+-- Add Amount Textbox (Left)
+local moneyInput = Instance.new("TextBox", rowFrame)
+moneyInput.Size = UDim2.new(0.48, 0, 1, 0)  -- 48% of width
+moneyInput.Position = UDim2.new(0, 0, 0, 0)
+moneyInput.PlaceholderText = "Add Amount"
+moneyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+moneyInput.TextColor3 = Color3.fromRGB(0, 0, 0)
+moneyInput.TextScaled = true
+
+-- Add Money Button (Right)
+local moneyButton = Instance.new("TextButton", rowFrame)
+moneyButton.Size = UDim2.new(0.48, 0, 1, 0)  -- 48% of width
+moneyButton.Position = UDim2.new(0.52, 0, 0, 0)  -- Starts slightly after textbox
 moneyButton.Text = "Add Money"
 moneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+moneyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+moneyButton.TextScaled = true
 
-local moneyInput = Instance.new("TextBox", contentFrame)
-moneyInput.Size = UDim2.new(0.8, 0, 0.2, 0)
-moneyInput.Position = UDim2.new(0.1, 0, 0.5, 0)
-moneyInput.PlaceholderText = "Enter Amount"
-moneyInput.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-
--- Highlight Path Button
+-- Highlight Paths Button (Centered below)
 local highlightButton = Instance.new("TextButton", contentFrame)
-highlightButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-highlightButton.Position = UDim2.new(0.1, 0, 0.75, 0)
+highlightButton.Size = UDim2.new(0.9, 0, 0.15, 0)
+highlightButton.Position = UDim2.new(0.05, 0, 0.4, 0)
 highlightButton.Text = "Highlight Paths"
 highlightButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+highlightButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+highlightButton.TextScaled = true
 
 -- Money Function
 moneyButton.MouseButton1Click:Connect(function()
