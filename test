@@ -1,24 +1,27 @@
--- GUI Creation
+-- AING GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local Title = Instance.new("TextLabel")
+local MinimizeButton = Instance.new("TextButton")
+local MinimizedIcon = Instance.new("TextButton")
 local Sidebar = Instance.new("Frame")
 local MainTab = Instance.new("TextButton")
 local ESPTab = Instance.new("TextButton")
 local ContentFrame = Instance.new("Frame")
+local ESPContentFrame = Instance.new("Frame")
 local PathButton = Instance.new("TextButton")
 local ESPButton = Instance.new("TextButton")
 
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Main Frame (Background) - Now Draggable!
+-- Main Frame (Draggable & Minimizable)
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
 MainFrame.Size = UDim2.new(0, 300, 0, 200)
 MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Active = true  -- Allows dragging
-MainFrame.Draggable = true -- Makes it draggable
+MainFrame.Active = true  
+MainFrame.Draggable = true 
 
 -- Title Bar
 Title.Parent = MainFrame
@@ -28,6 +31,25 @@ Title.Size = UDim2.new(1, 0, 0.15, 0)
 Title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 
+-- Minimize Button
+MinimizeButton.Parent = Title
+MinimizeButton.Text = "-"
+MinimizeButton.Size = UDim2.new(0.1, 0, 1, 0)
+MinimizeButton.Position = UDim2.new(0.9, 0, 0, 0)
+MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Minimized Icon (Hidden Initially)
+MinimizedIcon.Parent = ScreenGui
+MinimizedIcon.Text = "AING"
+MinimizedIcon.Size = UDim2.new(0, 50, 0, 50)
+MinimizedIcon.Position = UDim2.new(0.05, 0, 0.05, 0)
+MinimizedIcon.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+MinimizedIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinimizedIcon.Visible = false
+MinimizedIcon.Active = true  
+MinimizedIcon.Draggable = true 
+
 -- Sidebar Menu
 Sidebar.Parent = MainFrame
 Sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
@@ -36,7 +58,7 @@ Sidebar.Position = UDim2.new(0, 0, 0.15, 0)
 
 -- Main Tab Button
 MainTab.Parent = Sidebar
-MainTab.Text = "Main"
+MainTab.Text = "Glass Bridge"
 MainTab.Size = UDim2.new(1, 0, 0.2, 0)
 MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
 MainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -49,129 +71,52 @@ ESPTab.Position = UDim2.new(0, 0, 0.25, 0)
 ESPTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
 ESPTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 
--- Content Frame (Buttons go inside here)
+-- Content Frame (Main Tab)
 ContentFrame.Parent = MainFrame
 ContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
 ContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
 ContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
 
--- Path Button
+-- ESP Content Frame (ESP Tab)
+ESPContentFrame.Parent = MainFrame
+ESPContentFrame.BackgroundColor3 = Color3.fromRGB(35, 35, 50)
+ESPContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
+ESPContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
+ESPContentFrame.Visible = false -- Hide initially
+
+-- Path Button (Centered)
 PathButton.Parent = ContentFrame
 PathButton.Text = "Show Path"
 PathButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-PathButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+PathButton.Position = UDim2.new(0.1, 0, 0.35, 0)
 PathButton.BackgroundColor3 = Color3.fromRGB(200, 100, 0)
 
-PathButton.MouseButton1Click:Connect(function()
-    local glassesFolder = workspace:FindFirstChild("Glasses")
-
-    if glassesFolder then
-        local correctModel = glassesFolder:FindFirstChild("Correct")
-        local wrongModel = glassesFolder:FindFirstChild("Wrong")
-
-        if wrongModel then
-            for _, part in pairs(wrongModel:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.BrickColor = BrickColor.new("Bright red") -- Incorrect Path
-                end
-            end
-        else
-            warn("Wrong model not found")
-        end
-
-        if correctModel then
-            for _, part in pairs(correctModel:GetDescendants()) do
-                if part:IsA("BasePart") then
-                    part.BrickColor = BrickColor.new("Bright green") -- Correct Path
-                end
-            end
-        else
-            warn("Correct model not found")
-        end
-    else
-        warn("Glasses folder not found")
-    end
-end)
-
--- ESP Variables
-local ESPEnabled = false
-local ESPObjects = {}
-
--- ESP Function
-function createESP(player)
-    if player == game.Players.LocalPlayer then return end
-
-    local character = player.Character
-    if character and character:FindFirstChild("HumanoidRootPart") then
-        local billboard = Instance.new("BillboardGui")
-        local nameLabel = Instance.new("TextLabel")
-
-        billboard.Parent = character.HumanoidRootPart
-        billboard.Size = UDim2.new(0, 100, 0, 50)
-        billboard.StudsOffset = Vector3.new(0, 2, 0)
-        billboard.AlwaysOnTop = true
-
-        nameLabel.Parent = billboard
-        nameLabel.Size = UDim2.new(1, 0, 1, 0)
-        nameLabel.BackgroundTransparency = 1
-        nameLabel.TextSize = 14
-        nameLabel.Font = Enum.Font.SourceSansBold
-        nameLabel.TextColor3 = Color3.fromRGB(255, 0, 0) -- Default color for enemies
-        nameLabel.Text = player.Name
-
-        -- Team Check (If the game supports teams)
-        if game:GetService("Teams") then
-            local localPlayer = game.Players.LocalPlayer
-            if localPlayer.Team == player.Team then
-                nameLabel.TextColor3 = Color3.fromRGB(0, 255, 0) -- Green for teammates
-            end
-        end
-
-        -- Store ESP objects
-        ESPObjects[player] = billboard
-    end
-end
-
--- Function to enable ESP
-function enableESP()
-    for _, player in pairs(game.Players:GetPlayers()) do
-        createESP(player)
-    end
-
-    game.Players.PlayerAdded:Connect(function(player)
-        player.CharacterAdded:Connect(function()
-            createESP(player)
-        end)
-    end)
-end
-
--- Function to disable ESP
-function disableESP()
-    for _, obj in pairs(ESPObjects) do
-        if obj then
-            obj:Destroy()
-        end
-    end
-    ESPObjects = {}
-end
-
--- ESP Toggle Button
-ESPButton.Parent = ContentFrame
+-- ESP Toggle Button (Centered inside ESP Tab)
+ESPButton.Parent = ESPContentFrame
 ESPButton.Text = "ESP: OFF"
 ESPButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-ESPButton.Position = UDim2.new(0.1, 0, 0.6, 0)
+ESPButton.Position = UDim2.new(0.1, 0, 0.35, 0)
 ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
 
-ESPButton.MouseButton1Click:Connect(function()
-    ESPEnabled = not ESPEnabled
+-- Tab Switching Logic
+MainTab.MouseButton1Click:Connect(function()
+    ContentFrame.Visible = true
+    ESPContentFrame.Visible = false
+end)
 
-    if ESPEnabled then
-        ESPButton.Text = "ESP: ON"
-        ESPButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
-        enableESP()
-    else
-        ESPButton.Text = "ESP: OFF"
-        ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-        disableESP()
-    end
+ESPTab.MouseButton1Click:Connect(function()
+    ContentFrame.Visible = false
+    ESPContentFrame.Visible = true
+end)
+
+-- Minimize Button Function
+MinimizeButton.MouseButton1Click:Connect(function()
+    MainFrame.Visible = false
+    MinimizedIcon.Visible = true
+end)
+
+-- Restore GUI when clicking Minimized Icon
+MinimizedIcon.MouseButton1Click:Connect(function()
+    MainFrame.Visible = true
+    MinimizedIcon.Visible = false
 end)
