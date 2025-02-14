@@ -1,5 +1,7 @@
 -- Services
 local TweenService = game:GetService("TweenService")
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
 
 -- GUI Creation
 local ScreenGui = Instance.new("ScreenGui")
@@ -15,7 +17,6 @@ local ContentFrame = Instance.new("Frame")
 local ESPContentFrame = Instance.new("Frame")
 local ESPButton = Instance.new("TextButton")
 
--- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
 -- Main Frame
@@ -67,20 +68,21 @@ Sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
 Sidebar.Size = UDim2.new(0.3, 0, 0.85, 0)
 Sidebar.Position = UDim2.new(0, 0, 0.15, 0)
 
--- Main Tab
-MainTab.Parent = Sidebar
-MainTab.Text = "Main"
-MainTab.Size = UDim2.new(1, 0, 0.2, 0)
-MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-MainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
-
--- ESP Tab
+-- ESP Tab (Now on top)
 ESPTab.Parent = Sidebar
 ESPTab.Text = "ESP"
 ESPTab.Size = UDim2.new(1, 0, 0.2, 0)
-ESPTab.Position = UDim2.new(0, 0, 0.25, 0)
+ESPTab.Position = UDim2.new(0, 0, 0.05, 0)
 ESPTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
 ESPTab.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Main Tab (Now below ESP Tab)
+MainTab.Parent = Sidebar
+MainTab.Text = "Main"
+MainTab.Size = UDim2.new(1, 0, 0.2, 0)
+MainTab.Position = UDim2.new(0, 0, 0.3, 0)
+MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
+MainTab.TextColor3 = Color3.fromRGB(255, 255, 255)
 
 -- Content Frames
 ContentFrame.Parent = MainFrame
@@ -94,13 +96,6 @@ ESPContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
 ESPContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
 ESPContentFrame.Visible = false
 
--- ESP Toggle Button
-ESPButton.Parent = ESPContentFrame
-ESPButton.Text = "ESP: OFF"
-ESPButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-ESPButton.Position = UDim2.new(0.1, 0, 0.35, 0)
-ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-
 -- Tab Switching
 MainTab.MouseButton1Click:Connect(function()
     ContentFrame.Visible = true
@@ -110,34 +105,4 @@ end)
 ESPTab.MouseButton1Click:Connect(function()
     ContentFrame.Visible = false
     ESPContentFrame.Visible = true
-end)
-
--- Minimize with Smooth Transition
-MinimizeButton.MouseButton1Click:Connect(function()
-    local tween = TweenService:Create(MainFrame, TweenInfo.new(0.3), {Size = UDim2.new(0, 0, 0, 0)})
-    tween:Play()
-    tween.Completed:Wait()
-    MainFrame.Visible = false
-    MinimizedIcon.Visible = true
-end)
-
--- Restore GUI
-MinimizedIcon.MouseButton1Click:Connect(function()
-    MainFrame.Size = UDim2.new(0, 350, 0, 200)
-    MainFrame.Visible = true
-    MinimizedIcon.Visible = false
-end)
-
--- Close GUI
-CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
-end)
-
--- ESP Toggle Logic
-local espEnabled = false
-ESPButton.MouseButton1Click:Connect(function()
-    espEnabled = not espEnabled
-    ESPButton.Text = espEnabled and "ESP: ON" or "ESP: OFF"
-    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 150, 0) or Color3.fromRGB(150, 0, 0)
-    -- Add ESP functionality here if needed
 end)
