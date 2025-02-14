@@ -10,12 +10,7 @@ local MainTab = Instance.new("TextButton")
 local ESPTab = Instance.new("TextButton")
 local ContentFrame = Instance.new("Frame")
 local ESPContentFrame = Instance.new("Frame")
-local PathButton = Instance.new("TextButton")
 local ESPButton = Instance.new("TextButton")
-local WarningFrame = Instance.new("Frame")
-local WarningText = Instance.new("TextLabel")
-local YesButton = Instance.new("TextButton")
-local NoButton = Instance.new("TextButton")
 
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
@@ -109,7 +104,7 @@ MinimizedIcon.MouseButton1Click:Connect(function()
     MinimizedIcon.Visible = false
 end)
 
--- Close Warning Function
+-- Close Function
 CloseButton.MouseButton1Click:Connect(function()
     local confirm = Instance.new("Message", ScreenGui)
     confirm.Text = "Are you sure you want to close?"
@@ -129,15 +124,53 @@ ESPTab.MouseButton1Click:Connect(function()
     ESPContentFrame.Visible = true
 end)
 
--- ESP Toggle Function
+-- ESP Function
 local espEnabled = false
+local espObjects = {}
+
+function createESP(player)
+    if player == game.Players.LocalPlayer then return end
+
+    local character = player.Character
+    if not character then return end
+
+    local teamCheck = game.Players.LocalPlayer.Team ~= player.Team
+
+    for _, part in pairs(character:GetChildren()) do
+        if part:IsA("BasePart") and teamCheck then
+            local highlight = Instance.new("BoxHandleAdornment")
+            highlight.Size = part.Size + Vector3.new(0.1, 0.1, 0.1)
+            highlight.Color3 = Color3.fromRGB(255, 0, 0) 
+            highlight.AlwaysOnTop = true
+            highlight.Adornee = part
+            highlight.Parent = part
+
+            table.insert(espObjects, highlight)
+        end
+    end
+end
+
+function removeESP()
+    for _, obj in ipairs(espObjects) do
+        if obj then
+            obj:Destroy()
+        end
+    end
+    espObjects = {}
+end
+
 ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
+    ESPButton.Text = espEnabled and "ESP: ON" or "ESP: OFF"
+    ESPButton.BackgroundColor3 = espEnabled and Color3.fromRGB(0, 200, 0) or Color3.fromRGB(150, 0, 0)
+
     if espEnabled then
-        ESPButton.Text = "ESP: ON"
-        ESPButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+        for _, player in pairs(game.Players:GetPlayers()) do
+            createESP(player)
+        end
+
+        game.Players.PlayerAdded:Connect(createESP)
     else
-        ESPButton.Text = "ESP: OFF"
-        ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
+        removeESP()
     end
 end)
