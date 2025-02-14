@@ -87,7 +87,7 @@ otherButton.Text = "Other"
 otherButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 otherButton.BackgroundColor3 = Color3.fromRGB(100, 50, 200)
 
--- Content Area (Switchable)
+-- Content Areas
 local mainContent = Instance.new("Frame", mainFrame)
 mainContent.Size = UDim2.new(1, -100, 1, -30)
 mainContent.Position = UDim2.new(0, 100, 0, 30)
@@ -97,7 +97,7 @@ local otherContent = Instance.new("Frame", mainFrame)
 otherContent.Size = UDim2.new(1, -100, 1, -30)
 otherContent.Position = UDim2.new(0, 100, 0, 30)
 otherContent.BackgroundColor3 = Color3.fromRGB(40, 40, 70)
-otherContent.Visible = false  -- Initially hidden
+otherContent.Visible = false
 
 -- Row container (Money UI)
 local rowFrame = Instance.new("Frame", mainContent)
@@ -121,6 +121,15 @@ moneyButton.Text = "Add Money"
 moneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 moneyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 moneyButton.TextScaled = true
+
+-- Highlight Paths Button
+local pathButton = Instance.new("TextButton", mainContent)
+pathButton.Size = UDim2.new(0.9, 0, 0.15, 0)
+pathButton.Position = UDim2.new(0.05, 0, 0.4, 0)
+pathButton.Text = "Highlight Paths"
+pathButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+pathButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+pathButton.TextScaled = true
 
 -- Infinite Yield Button (Other Tab)
 local infiniteYieldButton = Instance.new("TextButton", otherContent)
