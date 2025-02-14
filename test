@@ -12,153 +12,59 @@ local ContentFrame = Instance.new("Frame")
 local ESPContentFrame = Instance.new("Frame")
 local ESPButton = Instance.new("TextButton")
 
+-- Close Warning UI
+local WarningFrame = Instance.new("Frame")
+local WarningText = Instance.new("TextLabel")
+local YesButton = Instance.new("TextButton")
+local NoButton = Instance.new("TextButton")
+
 -- Parent GUI to Player
 ScreenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
 
--- Main Frame (Draggable)
-MainFrame.Parent = ScreenGui
-MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
-MainFrame.Size = UDim2.new(0, 300, 0, 200)
-MainFrame.Position = UDim2.new(0.3, 0, 0.3, 0)
-MainFrame.Active = true  
-MainFrame.Draggable = true 
-
--- Title Bar
-Title.Parent = MainFrame
-Title.Text = "AING Hub"
-Title.Size = UDim2.new(1, 0, 0.15, 0)
-Title.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-
--- Minimize Button
-MinimizeButton.Parent = Title
-MinimizeButton.Text = "-"
-MinimizeButton.Size = UDim2.new(0.1, 0, 1, 0)
-MinimizeButton.Position = UDim2.new(0.8, 0, 0, 0)
-MinimizeButton.BackgroundColor3 = Color3.fromRGB(200, 150, 50)
-MinimizeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
--- Close Button
-CloseButton.Parent = Title
-CloseButton.Text = "X"
-CloseButton.Size = UDim2.new(0.1, 0, 1, 0)
-CloseButton.Position = UDim2.new(0.9, 0, 0, 0)
-CloseButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
-CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
-
--- Minimized Icon
-MinimizedIcon.Parent = ScreenGui
-MinimizedIcon.Text = "AING"
-MinimizedIcon.Size = UDim2.new(0, 50, 0, 50)
-MinimizedIcon.Position = UDim2.new(0.05, 0, 0.05, 0)
-MinimizedIcon.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-MinimizedIcon.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinimizedIcon.Visible = false
-MinimizedIcon.Active = true  
-MinimizedIcon.Draggable = true 
-
--- Sidebar Menu
-Sidebar.Parent = MainFrame
-Sidebar.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
-Sidebar.Size = UDim2.new(0.3, 0, 0.85, 0)
-Sidebar.Position = UDim2.new(0, 0, 0.15, 0)
-
--- Main Tab Button
-MainTab.Parent = Sidebar
-MainTab.Text = "Main"
-MainTab.Size = UDim2.new(1, 0, 0.2, 0)
-MainTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-
--- ESP Tab Button
-ESPTab.Parent = Sidebar
-ESPTab.Text = "ESP"
-ESPTab.Size = UDim2.new(1, 0, 0.2, 0)
-ESPTab.Position = UDim2.new(0, 0, 0.25, 0)
-ESPTab.BackgroundColor3 = Color3.fromRGB(50, 50, 70)
-
--- Content Frames
-ContentFrame.Parent = MainFrame
-ContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
-ContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
-
-ESPContentFrame.Parent = MainFrame
-ESPContentFrame.Size = UDim2.new(0.7, 0, 0.85, 0)
-ESPContentFrame.Position = UDim2.new(0.3, 0, 0.15, 0)
-ESPContentFrame.Visible = false
-
--- ESP Button (Toggle)
-ESPButton.Parent = ESPContentFrame
-ESPButton.Text = "ESP: OFF"
-ESPButton.Size = UDim2.new(0.8, 0, 0.3, 0)
-ESPButton.Position = UDim2.new(0.1, 0, 0.35, 0)
-ESPButton.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-
--- Minimize Function
-MinimizeButton.MouseButton1Click:Connect(function()
-    MainFrame.Visible = false
-    MinimizedIcon.Visible = true
-end)
-
-MinimizedIcon.MouseButton1Click:Connect(function()
-    MainFrame.Visible = true
-    MinimizedIcon.Visible = false
-end)
-
--- Close Function
-CloseButton.MouseButton1Click:Connect(function()
-    local confirm = Instance.new("Message", ScreenGui)
-    confirm.Text = "Are you sure you want to close?"
-    wait(2)
-    confirm:Destroy()
-    ScreenGui:Destroy()
-end)
-
--- Tab Switching Logic
-MainTab.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = true
-    ESPContentFrame.Visible = false
-end)
-
-ESPTab.MouseButton1Click:Connect(function()
-    ContentFrame.Visible = false
-    ESPContentFrame.Visible = true
-end)
-
--- ESP Function
+-- ESP Variables
 local espEnabled = false
 local espObjects = {}
 
-function createESP(player)
-    if player == game.Players.LocalPlayer then return end
+-- Function to Remove All ESP
+local function removeESP()
+    for _, obj in ipairs(espObjects) do
+        if obj then obj:Destroy() end
+    end
+    espObjects = {}
+end
+
+-- Function to Create ESP for Players
+local function createESP(player)
+    if player == game.Players.LocalPlayer or not espEnabled then return end
 
     local character = player.Character
     if not character then return end
 
     local teamCheck = game.Players.LocalPlayer.Team ~= player.Team
 
-    for _, part in pairs(character:GetChildren()) do
-        if part:IsA("BasePart") and teamCheck then
-            local highlight = Instance.new("BoxHandleAdornment")
-            highlight.Size = part.Size + Vector3.new(0.1, 0.1, 0.1)
-            highlight.Color3 = Color3.fromRGB(255, 0, 0) 
-            highlight.AlwaysOnTop = true
-            highlight.Adornee = part
-            highlight.Parent = part
+    if teamCheck then
+        local head = character:FindFirstChild("Head")
+        if head then
+            local esp = Instance.new("BillboardGui")
+            esp.Adornee = head
+            esp.Size = UDim2.new(4, 0, 1, 0)
+            esp.StudsOffset = Vector3.new(0, 2, 0)
+            esp.AlwaysOnTop = true
 
-            table.insert(espObjects, highlight)
+            local text = Instance.new("TextLabel", esp)
+            text.Size = UDim2.new(1, 0, 1, 0)
+            text.Text = player.Name
+            text.BackgroundTransparency = 1
+            text.TextColor3 = Color3.fromRGB(255, 0, 0)
+            text.TextStrokeTransparency = 0
+
+            esp.Parent = head
+            table.insert(espObjects, esp)
         end
     end
 end
 
-function removeESP()
-    for _, obj in ipairs(espObjects) do
-        if obj then
-            obj:Destroy()
-        end
-    end
-    espObjects = {}
-end
-
+-- Function to Toggle ESP
 ESPButton.MouseButton1Click:Connect(function()
     espEnabled = not espEnabled
     ESPButton.Text = espEnabled and "ESP: ON" or "ESP: OFF"
@@ -168,9 +74,52 @@ ESPButton.MouseButton1Click:Connect(function()
         for _, player in pairs(game.Players:GetPlayers()) do
             createESP(player)
         end
-
         game.Players.PlayerAdded:Connect(createESP)
     else
         removeESP()
     end
+end)
+
+-- Close Warning UI Setup
+WarningFrame.Parent = ScreenGui
+WarningFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
+WarningFrame.Size = UDim2.new(0, 200, 0, 100)
+WarningFrame.Position = UDim2.new(0.5, -100, 0.5, -50)
+WarningFrame.Visible = false
+
+WarningText.Parent = WarningFrame
+WarningText.Text = "Are you sure you want to close?"
+WarningText.Size = UDim2.new(1, 0, 0.6, 0)
+WarningText.TextColor3 = Color3.fromRGB(255, 255, 255)
+WarningText.BackgroundTransparency = 1
+
+YesButton.Parent = WarningFrame
+YesButton.Text = "Yes"
+YesButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+YesButton.Position = UDim2.new(0.1, 0, 0.65, 0)
+YesButton.BackgroundColor3 = Color3.fromRGB(200, 50, 50)
+YesButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+NoButton.Parent = WarningFrame
+NoButton.Text = "No"
+NoButton.Size = UDim2.new(0.4, 0, 0.3, 0)
+NoButton.Position = UDim2.new(0.5, 0, 0.65, 0)
+NoButton.BackgroundColor3 = Color3.fromRGB(50, 200, 50)
+NoButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+
+-- Close Button Function (Opens Warning)
+CloseButton.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = true
+end)
+
+-- Yes Button (Closes GUI)
+YesButton.MouseButton1Click:Connect(function()
+    espEnabled = false
+    removeESP()
+    ScreenGui:Destroy()
+end)
+
+-- No Button (Cancels Closing)
+NoButton.MouseButton1Click:Connect(function()
+    WarningFrame.Visible = false
 end)
