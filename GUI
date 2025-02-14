@@ -51,6 +51,13 @@ contentFrame.Size = UDim2.new(1, -100, 1, -30)
 contentFrame.Position = UDim2.new(0, 100, 0, 30)
 contentFrame.BackgroundColor3 = Color3.fromRGB(30, 35, 60)
 
+-- Money Button
+local moneyButton = Instance.new("TextButton", contentFrame)
+moneyButton.Size = UDim2.new(0.8, 0, 0.3, 0)
+moneyButton.Position = UDim2.new(0.1, 0, 0.1, 0)
+moneyButton.Text = "Add Money"
+moneyButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
+
 local moneyInput = Instance.new("TextBox", contentFrame)
 moneyInput.Size = UDim2.new(0.8, 0, 0.2, 0)
 moneyInput.Position = UDim2.new(0.1, 0, 0.5, 0)
@@ -63,6 +70,14 @@ highlightButton.Size = UDim2.new(0.8, 0, 0.3, 0)
 highlightButton.Position = UDim2.new(0.1, 0, 0.75, 0)
 highlightButton.Text = "Highlight Paths"
 highlightButton.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
+
+-- Money Function
+moneyButton.MouseButton1Click:Connect(function()
+    local amount = tonumber(moneyInput.Text) or 0
+    if amount > 0 then
+        game:GetService("ReplicatedStorage").CratesUtilities.Remotes.GiveReward:FireServer(amount)
+    end
+end)
 
 -- Path Highlighting Function
 highlightButton.MouseButton1Click:Connect(function()
