@@ -94,15 +94,30 @@ addMoney.MouseButton1Click:Connect(function()
 end)
 
 -- Highlight Paths Button
-local highlightPaths = Instance.new("TextButton")
-highlightPaths.Size = UDim2.new(0.9, 0, 0, 40)
-highlightPaths.Position = UDim2.new(0.05, 0, 0, 60)
-highlightPaths.BackgroundColor3 = Color3.fromRGB(200, 0, 0)
-highlightPaths.Text = "Highlight Paths"
-highlightPaths.TextColor3 = Color3.fromRGB(255, 255, 255)
-highlightPaths.Font = Enum.Font.SourceSansBold
-highlightPaths.TextSize = 18
-highlightPaths.Parent = mainContent
+highlightButton.MouseButton1Click:Connect(function()
+    local correctModel = workspace:FindFirstChild("Glasses"):FindFirstChild("Correct")
+    local wrongModel = workspace:FindFirstChild("Glasses"):FindFirstChild("Wrong")
+
+    if wrongModel then
+        for _, part in pairs(wrongModel:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.BrickColor = BrickColor.new("Bright red") 
+            end
+        end
+    else
+        warn("Wrong model not found.")
+    end
+
+    if correctModel then
+        for _, part in pairs(correctModel:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.BrickColor = BrickColor.new("Bright green") 
+            end
+        end
+    else
+        warn("Correct model not found.")
+    end
+end)
 
 highlightPaths.MouseButton1Click:Connect(function()
     for _, part in pairs(workspace:GetDescendants()) do
