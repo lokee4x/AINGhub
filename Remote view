@@ -6,12 +6,14 @@ local Title = Instance.new("TextLabel")
 local CopyButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
 
-ScreenGui.Parent = game:GetService("CoreGui") -- Menaruh GUI di layar pemain
+ScreenGui.Parent = game:GetService("CoreGui")
 
 Frame.Parent = ScreenGui
 Frame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
 Frame.Size = UDim2.new(0, 400, 0, 300)
 Frame.Position = UDim2.new(0.5, -200, 0.5, -150)
+Frame.Active = true
+Frame.Draggable = true -- Bisa dipindahkan
 
 Title.Parent = Frame
 Title.Text = "🔍 Remote Scanner"
@@ -50,29 +52,30 @@ CopyButton.Position = UDim2.new(0, 0, 1, -30)
 CopyButton.BackgroundColor3 = Color3.fromRGB(0, 150, 0)
 CopyButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 
--- Mencari semua RemoteEvent & RemoteFunction
 local remotes = {}
 
-for _, remote in ipairs(game:GetDescendants()) do
-    if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
-        table.insert(remotes, remote:GetFullName())
+task.spawn(function()
+    for _, remote in ipairs(game:GetDescendants()) do
+        if remote:IsA("RemoteEvent") or remote:IsA("RemoteFunction") then
+            table.insert(remotes, remote:GetFullName())
 
-        local RemoteLabel = Instance.new("TextLabel")
-        RemoteLabel.Parent = ScrollingFrame
-        RemoteLabel.Text = remote.ClassName .. ": " .. remote:GetFullName()
-        RemoteLabel.Size = UDim2.new(1, 0, 0, 20)
-        RemoteLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
-        RemoteLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-        RemoteLabel.TextXAlignment = Enum.TextXAlignment.Left
-        RemoteLabel.Font = Enum.Font.SourceSans
-        RemoteLabel.TextSize = 14
+            local RemoteLabel = Instance.new("TextLabel")
+            RemoteLabel.Parent = ScrollingFrame
+            RemoteLabel.Text = remote.ClassName .. ": " .. remote:GetFullName()
+            RemoteLabel.Size = UDim2.new(1, 0, 0, 20)
+            RemoteLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+            RemoteLabel.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+            RemoteLabel.TextXAlignment = Enum.TextXAlignment.Left
+            RemoteLabel.Font = Enum.Font.SourceSans
+            RemoteLabel.TextSize = 14
+        end
     end
-end
 
--- Update ukuran ScrollingFrame
-ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, #remotes * 25)
+    if ScreenGui.Parent then
+        ScrollingFrame.CanvasSize = UDim2.new(0, 0, 0, #remotes * 25)
+    end
+end)
 
--- Copy button function
 CopyButton.MouseButton1Click:Connect(function()
     if #remotes > 0 then
         setclipboard(table.concat(remotes, "\n"))
@@ -86,8 +89,7 @@ CopyButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Close button function (Menghapus GUI dan menghentikan operasi)
 CloseButton.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy() -- Hapus semua UI dari game
-    remotes = nil -- Hapus data remotes dari memori
+    table.clear(remotes)
+    ScreenGui:Destroy()
 end)
