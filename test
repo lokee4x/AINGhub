@@ -1,0 +1,26 @@
+local correctModel = workspace.Glasses:FindFirstChild("Correct")
+local wrongModel = workspace.Glasses:FindFirstChild("Wrong")
+local Section = Window:NewSection("Glasses")
+
+-- Function to change colors
+local function changeColor(model, color)
+    if model then
+        for _, part in pairs(model:GetDescendants()) do
+            if part:IsA("BasePart") then
+                part.BrickColor = BrickColor.new(color)
+            end
+        end
+    else
+        print("Model '" .. model.Name .. "' not found.")
+    end
+end
+
+Section:CreateButton("Show path", function()
+    if not correctModel and not wrongModel then
+        print("Both 'Correct' and 'Wrong' models are missing.")
+        return
+    end
+
+    changeColor(wrongModel, "Terra Cotta") -- Color wrong model
+    changeColor(correctModel, "Dark stone grey") -- Corrected "Grime" issue
+end)
