@@ -1,3 +1,4 @@
+-- LocalScript
 local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local CloseButton = Instance.new("TextButton")
@@ -48,28 +49,29 @@ ESPButton.TextSize = 18
 
 -- ESP Variables
 local espEnabled = false
+local espCache = {}  -- Cache untuk pemain yang sudah diberi ESP
 
--- Function to Create ESP
+-- Opsi Kustomisasi
+local espColor = Color3.fromRGB(255, 0, 0)  -- Warna ESP
+local nameColor = Color3.fromRGB(255, 255, 0)  -- Warna teks nama pemain
+local outlineColor = Color3.fromRGB(255, 255, 255)  -- Warna outline
+
+-- Fungsi untuk membuat ESP
 local function createESP(player)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        -- **Remove old ESP if exists**
-        if player.Character:FindFirstChild("ESPBox") then
-            player.Character:FindFirstChild("ESPBox"):Destroy()
-        end
-        if player.Character:FindFirstChild("NameTag") then
-            player.Character:FindFirstChild("NameTag"):Destroy()
-        end
+        -- Cek apakah ESP sudah ada
+        if espCache[player] then return end
 
-        -- **Create Highlight (Box around player)**
+        -- **Buat Highlight dan NameTag**
         local highlight = Instance.new("Highlight")
         highlight.Name = "ESPBox"
         highlight.Parent = player.Character
-        highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Merah untuk semua tim
-        highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
+        highlight.FillColor = espColor  -- Menggunakan warna kustom
+        highlight.OutlineColor = outlineColor
         highlight.FillTransparency = 0.5
         highlight.OutlineTransparency = 0
 
-        -- **Create Billboard GUI for Player Name**
+        -- **Buat BillboardGui untuk nama pemain**
         local billboard = Instance.new("BillboardGui")
         billboard.Name = "NameTag"
         billboard.Parent = player.Character
@@ -83,13 +85,16 @@ local function createESP(player)
         nameLabel.Size = UDim2.new(1, 0, 1, 0)
         nameLabel.BackgroundTransparency = 1
         nameLabel.Text = player.Name
-        nameLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        nameLabel.TextColor3 = nameColor  -- Menggunakan warna kustom untuk nama
         nameLabel.Font = Enum.Font.SourceSansBold
         nameLabel.TextSize = 16
+
+        -- Menambahkan player ke cache
+        espCache[player] = true
     end
 end
 
--- Function to Remove ESP
+-- Fungsi untuk menghapus ESP
 local function removeESP(player)
     if player.Character then
         if player.Character:FindFirstChild("ESPBox") then
@@ -98,14 +103,17 @@ local function removeESP(player)
         if player.Character:FindFirstChild("NameTag") then
             player.Character.NameTag:Destroy()
         end
+
+        -- Menghapus dari cache
+        espCache[player] = nil
     end
 end
 
--- Function to Update ESP for All Players
+-- Fungsi untuk mengupdate ESP
 local function updateESP()
     if espEnabled then
         for _, player in pairs(game.Players:GetPlayers()) do
-            if player ~= game.Players.LocalPlayer then
+            if player ~= game.Players.LocalPlayer and not espCache[player] then
                 createESP(player)
             end
         end
@@ -116,7 +124,7 @@ local function updateESP()
     end
 end
 
--- Toggle ESP Button
+-- Toggle ESP
 local function toggleESP()
     espEnabled = not espEnabled
     ESPButton.Text = espEnabled and "Toggle ESP ✅" or "Toggle ESP ❌"
@@ -125,17 +133,17 @@ end
 
 ESPButton.MouseButton1Click:Connect(toggleESP)
 
--- Apply ESP to New Players
+-- Terapkan ESP ke pemain baru
 game.Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         if espEnabled then
-            wait(1)
+            wait(1)  -- Memberikan sedikit delay agar karakter sepenuhnya muncul
             createESP(player)
         end
     end)
 end)
 
--- Apply ESP to Respawning Players
+-- Terapkan ESP ke pemain yang sudah ada
 for _, player in pairs(game.Players:GetPlayers()) do
     player.CharacterAdded:Connect(function()
         if espEnabled then
