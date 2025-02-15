@@ -1,1 +1,61 @@
+-- Pastikan script dijalankan di executor seperti Xeno atau Synapse X
+if not game or not game.Players then
+    warn("⚠️ Script harus dijalankan dalam game Roblox!")
+    return
+end
+
+-- Pemain lokal
+local player = game.Players.LocalPlayer
+
+-- Buat GUI utama
+local gui = Instance.new("ScreenGui", player:FindFirstChildWhichIsA("PlayerGui") or player:WaitForChild("PlayerGui"))
+gui.Name = "CustomGUI"
+
+-- 🏠 Frame utama
+local mainFrame = Instance.new("Frame", gui)
+mainFrame.Size = UDim2.new(0, 300, 0, 200)
+mainFrame.Position = UDim2.new(0.5, -150, 0.3, 0)
+mainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+-- 🏷️ Label Judul
+local titleLabel = Instance.new("TextLabel", mainFrame)
+titleLabel.Size = UDim2.new(1, 0, 0, 30)
+titleLabel.Text = "Be NPC or DIE GUI"
+titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+titleLabel.BackgroundTransparency = 1
+
+-- 🔘 Tombol Dummy 1
+local button1 = Instance.new("TextButton", mainFrame)
+button1.Size = UDim2.new(0.6, 0, 0, 40)
+button1.Position = UDim2.new(0.2, 0, 0.3, 0)
+button1.Text = "Fitur 1"
+button1.BackgroundColor3 = Color3.fromRGB(100, 200, 100)
+
+button1.MouseButton1Click:Connect(function()
+    print("Tombol Fitur 1 Diklik!")
+end)
+
+-- 🔘 Tombol Dummy 2
+local button2 = Instance.new("TextButton", mainFrame)
+button2.Size = UDim2.new(0.6, 0, 0, 40)
+button2.Position = UDim2.new(0.2, 0, 0.55, 0)
+button2.Text = "Fitur 2"
+button2.BackgroundColor3 = Color3.fromRGB(200, 100, 100)
+
+button2.MouseButton1Click:Connect(function()
+    print("Tombol Fitur 2 Diklik!")
+end)
+
+-- ❌ Tombol Tutup
+local closeButton = Instance.new("TextButton", mainFrame)
+closeButton.Size = UDim2.new(0.2, 0, 0, 30)
+closeButton.Position = UDim2.new(0.4, 0, 0.85, 0)
+closeButton.Text = "Tutup"
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+
+closeButton.MouseButton1Click:Connect(function()
+    gui:Destroy()
+end)
 
