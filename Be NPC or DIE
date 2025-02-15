@@ -2,7 +2,6 @@ local ScreenGui = Instance.new("ScreenGui")
 local MainFrame = Instance.new("Frame")
 local CloseButton = Instance.new("TextButton")
 local ESPButton = Instance.new("TextButton")
-local Feature2 = Instance.new("TextButton")
 local Title = Instance.new("TextLabel")
 
 ScreenGui.Parent = game.CoreGui
@@ -10,7 +9,7 @@ ScreenGui.Parent = game.CoreGui
 MainFrame.Name = "MainFrame"
 MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-MainFrame.Size = UDim2.new(0, 300, 0, 200)
+MainFrame.Size = UDim2.new(0, 300, 0, 150)
 MainFrame.Position = UDim2.new(0.5, -150, 0.4, 0)
 MainFrame.Active = true
 MainFrame.Draggable = true
@@ -19,7 +18,7 @@ Title.Name = "Title"
 Title.Parent = MainFrame
 Title.BackgroundTransparency = 1
 Title.Size = UDim2.new(1, 0, 0, 30)
-Title.Text = "Be NPC or DIE GUI"
+Title.Text = "ESP GUI"
 Title.TextColor3 = Color3.fromRGB(220, 220, 220)
 Title.Font = Enum.Font.SourceSansBold
 Title.TextSize = 18
@@ -41,47 +40,68 @@ ESPButton.Name = "ESPButton"
 ESPButton.Parent = MainFrame
 ESPButton.BackgroundColor3 = Color3.fromRGB(80, 180, 80)
 ESPButton.Size = UDim2.new(0.8, 0, 0, 40)
-ESPButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+ESPButton.Position = UDim2.new(0.1, 0, 0.4, 0)
 ESPButton.Text = "Toggle ESP ❌"
 ESPButton.TextColor3 = Color3.fromRGB(0, 0, 0)
 ESPButton.Font = Enum.Font.SourceSansBold
 ESPButton.TextSize = 18
 
-Feature2.Name = "Feature2"
-Feature2.Parent = MainFrame
-Feature2.BackgroundColor3 = Color3.fromRGB(180, 80, 80)
-Feature2.Size = UDim2.new(0.8, 0, 0, 40)
-Feature2.Position = UDim2.new(0.1, 0, 0.55, 0)
-Feature2.Text = "Fitur 2"
-Feature2.TextColor3 = Color3.fromRGB(0, 0, 0)
-Feature2.Font = Enum.Font.SourceSansBold
-Feature2.TextSize = 18
-
--- ESP Script
+-- ESP Variables
 local espEnabled = false
 
+-- Function to Create ESP
 local function createESP(player)
     if player.Character and player.Character:FindFirstChild("HumanoidRootPart") then
-        -- Cek apakah sudah ada ESP sebelumnya
-        if player.Character:FindFirstChild("Highlight") then
-            return
+        -- **Remove old ESP if exists**
+        if player.Character:FindFirstChild("ESPBox") then
+            player.Character:FindFirstChild("ESPBox"):Destroy()
         end
-        
+        if player.Character:FindFirstChild("NameTag") then
+            player.Character:FindFirstChild("NameTag"):Destroy()
+        end
+
+        -- **Create Highlight (Box around player)**
         local highlight = Instance.new("Highlight")
+        highlight.Name = "ESPBox"
         highlight.Parent = player.Character
         highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Merah untuk semua tim
         highlight.OutlineColor = Color3.fromRGB(255, 255, 255)
         highlight.FillTransparency = 0.5
         highlight.OutlineTransparency = 0
+
+        -- **Create Billboard GUI for Player Name**
+        local billboard = Instance.new("BillboardGui")
+        billboard.Name = "NameTag"
+        billboard.Parent = player.Character
+        billboard.Adornee = player.Character:FindFirstChild("HumanoidRootPart")
+        billboard.Size = UDim2.new(0, 100, 0, 25)
+        billboard.StudsOffset = Vector3.new(0, 3, 0)
+        billboard.AlwaysOnTop = true
+
+        local nameLabel = Instance.new("TextLabel")
+        nameLabel.Parent = billboard
+        nameLabel.Size = UDim2.new(1, 0, 1, 0)
+        nameLabel.BackgroundTransparency = 1
+        nameLabel.Text = player.Name
+        nameLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+        nameLabel.Font = Enum.Font.SourceSansBold
+        nameLabel.TextSize = 16
     end
 end
 
+-- Function to Remove ESP
 local function removeESP(player)
-    if player.Character and player.Character:FindFirstChild("Highlight") then
-        player.Character.Highlight:Destroy()
+    if player.Character then
+        if player.Character:FindFirstChild("ESPBox") then
+            player.Character.ESPBox:Destroy()
+        end
+        if player.Character:FindFirstChild("NameTag") then
+            player.Character.NameTag:Destroy()
+        end
     end
 end
 
+-- Function to Update ESP for All Players
 local function updateESP()
     if espEnabled then
         for _, player in pairs(game.Players:GetPlayers()) do
@@ -96,6 +116,7 @@ local function updateESP()
     end
 end
 
+-- Toggle ESP Button
 local function toggleESP()
     espEnabled = not espEnabled
     ESPButton.Text = espEnabled and "Toggle ESP ✅" or "Toggle ESP ❌"
@@ -104,6 +125,7 @@ end
 
 ESPButton.MouseButton1Click:Connect(toggleESP)
 
+-- Apply ESP to New Players
 game.Players.PlayerAdded:Connect(function(player)
     player.CharacterAdded:Connect(function()
         if espEnabled then
@@ -112,3 +134,13 @@ game.Players.PlayerAdded:Connect(function(player)
         end
     end)
 end)
+
+-- Apply ESP to Respawning Players
+for _, player in pairs(game.Players:GetPlayers()) do
+    player.CharacterAdded:Connect(function()
+        if espEnabled then
+            wait(1)
+            createESP(player)
+        end
+    end)
+end
