@@ -12,6 +12,8 @@ MainFrame.Parent = ScreenGui
 MainFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 MainFrame.Size = UDim2.new(0, 300, 0, 200)
 MainFrame.Position = UDim2.new(0.5, -150, 0.4, 0)
+MainFrame.Active = true
+MainFrame.Draggable = true
 
 Title.Name = "Title"
 Title.Parent = MainFrame
@@ -26,7 +28,7 @@ CloseButton.Name = "CloseButton"
 CloseButton.Parent = MainFrame
 CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
-CloseButton.Position = UDim2.new(1, -35, 0, 5) -- Pojok kanan atas
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
 CloseButton.Text = "X"
 CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 CloseButton.Font = Enum.Font.SourceSansBold
