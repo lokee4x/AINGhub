@@ -10,8 +10,20 @@ local Frame = Instance.new("Frame")
 Frame.Size = UDim2.new(0, 200, 0, 150)
 Frame.Position = UDim2.new(0.5, -100, 0.5, -75)
 Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+Frame.Active = true
+Frame.Draggable = true -- Bisa digeser
 Frame.Parent = ScreenGui
 
+-- Tombol Close
+local CloseButton = Instance.new("TextButton")
+CloseButton.Size = UDim2.new(0, 30, 0, 30)
+CloseButton.Position = UDim2.new(1, -35, 0, 5)
+CloseButton.Text = "X"
+CloseButton.BackgroundColor3 = Color3.fromRGB(255, 0, 0)
+CloseButton.TextColor3 = Color3.fromRGB(255, 255, 255)
+CloseButton.Parent = Frame
+
+-- Tombol Toggle ESP
 local ToggleButton = Instance.new("TextButton")
 ToggleButton.Size = UDim2.new(0, 180, 0, 50)
 ToggleButton.Position = UDim2.new(0, 10, 0, 50)
@@ -65,6 +77,11 @@ ToggleButton.MouseButton1Click:Connect(function()
         ToggleButton.Text = "ESP OFF"
         ToggleButton.BackgroundColor3 = Color3.fromRGB(255, 85, 85)
     end
+end)
+
+-- Close GUI saat tombol close ditekan
+CloseButton.MouseButton1Click:Connect(function()
+    ScreenGui:Destroy()
 end)
 
 -- Update ESP saat karakter pemain ditambahkan atau berubah
