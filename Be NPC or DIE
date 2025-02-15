@@ -1,3 +1,7 @@
+-- GUI Library (UI Sederhana)
+local Library = {} -- Buat library UI sendiri jika diperlukan
+local Window = {} -- Placeholder untuk window UI
+
 -- Buat GUI
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = game.CoreGui
@@ -20,10 +24,10 @@ ToggleButton.Parent = Frame
 local ESPEnabled = false
 local HighlightCache = {} -- Cache untuk menyimpan highlight agar tidak dibuat berulang kali
 
--- Function untuk memberikan efek glow pada pemain lawan
+-- Function untuk memberikan efek glow pada semua pemain
 local function ApplyESP()
     for _, player in pairs(game:GetService("Players"):GetPlayers()) do
-        if player ~= game.Players.LocalPlayer and player.Team ~= game.Players.LocalPlayer.Team and player.Character then
+        if player ~= game.Players.LocalPlayer and player.Character then
             for _, part in pairs(player.Character:GetChildren()) do
                 if part:IsA("BasePart") then
                     if not HighlightCache[part] then
@@ -63,11 +67,17 @@ ToggleButton.MouseButton1Click:Connect(function()
     end
 end)
 
--- Update ESP secara berkala jika pemain baru masuk atau karakter berubah
+-- Update ESP saat karakter pemain ditambahkan atau berubah
+local function OnCharacterAdded(character)
+    if ESPEnabled then
+        ApplyESP()
+    end
+end
+
+for _, player in pairs(game:GetService("Players"):GetPlayers()) do
+    player.CharacterAdded:Connect(OnCharacterAdded)
+end
+
 game:GetService("Players").PlayerAdded:Connect(function(player)
-    player.CharacterAdded:Connect(function()
-        if ESPEnabled then
-            ApplyESP()
-        end
-    end)
+    player.CharacterAdded:Connect(OnCharacterAdded)
 end)
