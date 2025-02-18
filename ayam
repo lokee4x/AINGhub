@@ -2,8 +2,7 @@ local ScreenGui = Instance.new("ScreenGui")
 local Frame = Instance.new("Frame")
 local MinimizeButton = Instance.new("TextButton")
 local CloseButton = Instance.new("TextButton")
-local MoneyHackButton = Instance.new("TextButton")
-local ShopHackButton = Instance.new("TextButton")
+local PointButton = Instance.new("TextButton")
 
 -- Setup GUI Properties
 ScreenGui.Parent = game.CoreGui
@@ -34,31 +33,26 @@ MinimizeButton.MouseButton1Click:Connect(function()
     Frame.Visible = not Frame.Visible
 end)
 
--- Money Hack Button
-MoneyHackButton.Parent = Frame
-MoneyHackButton.Text = "Money Hack"
-MoneyHackButton.Size = UDim2.new(0, 200, 0, 50)
-MoneyHackButton.Position = UDim2.new(0.1, 0, 0.3, 0)
-MoneyHackButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
-MoneyHackButton.MouseButton1Click:Connect(function()
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local GiveBonus = ReplicatedStorage.Events.GiveBonus
-    local CoinsBonus = ReplicatedStorage.Events.CoinsBonus
-    GiveBonus:FireServer(math.random(1000, 5000))
-    CoinsBonus:FireServer(math.random(1000, 5000))
-end)
+-- Point Button
+PointButton.Name = "PointButton"
+PointButton.Parent = Frame
+PointButton.Text = "Get Points"
+PointButton.Size = UDim2.new(0, 200, 0, 50)
+PointButton.Position = UDim2.new(0.1, 0, 0.3, 0)
+PointButton.BackgroundColor3 = Color3.fromRGB(0, 200, 0)
 
--- Shop Hack Button
-ShopHackButton.Parent = Frame
-ShopHackButton.Text = "Shop Hack"
-ShopHackButton.Size = UDim2.new(0, 200, 0, 50)
-ShopHackButton.Position = UDim2.new(0.1, 0, 0.6, 0)
-ShopHackButton.BackgroundColor3 = Color3.fromRGB(0, 0, 200)
-ShopHackButton.MouseButton1Click:Connect(function()
-    local ReplicatedStorage = game:GetService("ReplicatedStorage")
-    local BuyEvent = ReplicatedStorage.Events.Buy
-    local EquipTrail = ReplicatedStorage.Events.EquipTrail
-    local itemID = "BigRocketLauncher"
-    BuyEvent:FireServer(itemID)
-    EquipTrail:FireServer(itemID)
-end)
+if PointButton then
+    PointButton.MouseButton1Click:Connect(function()
+        local ReplicatedStorage = game:GetService("ReplicatedStorage")
+        local PointsEvent = ReplicatedStorage:FindFirstChild("Events") and ReplicatedStorage.Events:FindFirstChild("xd3")
+        
+        if PointsEvent then
+            PointsEvent:FireServer(math.random(1000, 5000))
+            print("Points Added!")
+        else
+            warn("Points event not found!")
+        end
+    end)
+else
+    warn("PointButton is nil! Check if it was created properly.")
+end
